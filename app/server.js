@@ -1,5 +1,5 @@
 var express = require("express"),
-		googleImages = require("../../google-images");
+		googleImages = require("./google-images");
 
 var app = express();
 
