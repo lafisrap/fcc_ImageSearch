@@ -1,0 +1,15 @@
+{
+  "name": "fcc-image-search",
+  "version": "0.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Michael Schmidt",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.3",
+    "google-images": "^2.1.0"
+  }
+}
