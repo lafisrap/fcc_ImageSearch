@@ -19,6 +19,7 @@ app.get( "/api/imagesearch/*", function(req, res) {
     .then(images => {
 			res.json(images);	
     }).catch(err => {
+      console.error( err );
     	res.json({})
     });
 });
