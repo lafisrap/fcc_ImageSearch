@@ -17,12 +17,15 @@ app.use(function(req, res, next) {
   next();
 });
 
+var searchTerms = [];
+
 app.get( "/api/imagesearch/*", function(req, res) {
+  var searchTerm = req.params[0];
 
   flickr
     .request()
     .media()
-    .search(req.params[0])
+    .search(searchTerm)
     .get({
         media: 'photos', // Only photos, no videos
         sort: 'date-taken-desc', // Ordered by most recently taken photos)
@@ -32,6 +35,11 @@ app.get( "/api/imagesearch/*", function(req, res) {
     })
     .then(data => {
       var {page, pages, perpage, total, photo} = data.body.photos;
+
+      if( searchTerms.indexOf(searchTerm) === -1 ) {
+        searchTerms.unshift(searchTerm);
+        searchTerms = searchTerms.slice(0,20);
+      }
 
       res.json( {
 
@@ -52,6 +60,11 @@ app.get( "/api/imagesearch/*", function(req, res) {
       res.json({})
     });
 });
+
+app.get( "/api/searchterms", function(req, res) {
+  res.json(searchTerms);
+});
+
 
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
