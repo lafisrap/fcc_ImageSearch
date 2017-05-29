@@ -28,7 +28,7 @@ app.get( "/api/imagesearch/*", function(req, res) {
         sort: 'date-taken-desc', // Ordered by most recently taken photos)
         page: parseInt(req.query.page) || 1,
         per_page: 20,
-        license: 1
+        license: "1"
     })
     .then(data => {
       var {page, pages, perpage, total, photo} = data.body.photos;
