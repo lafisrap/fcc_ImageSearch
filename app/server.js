@@ -1,9 +1,13 @@
 var express = require("express"),
-		googleImages = require("./google-images");
+//		googleImages = require("./google-images");
+    Flickr = require('flickr-sdk');
+
+var flickr = new Flickr({
+  "apiKey":            "c21fb0fb585620da8cee458229fab01a",
+  "apiSecret":         "c5dc295bb3f7b823",
+});
 
 var app = express();
-
-const client = new googleImages("013853972238622393725:awjwxodie50", "AIzaSyAjUh9S25aqhFL2WvNYRiO9JkG0rsrnwFc");
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -15,12 +19,37 @@ app.use(function(req, res, next) {
 
 app.get( "/api/imagesearch/*", function(req, res) {
 
-	client.search(req.params[0], { page: req.query.offset, size: "xxlarge", rights: "cc_publicdomain" }) // rights: cc_publicdomain, cc_attribute, cc_sharealike, cc_noncommercial, cc_nonderived
-    .then(images => {
-			res.json(images);	
+  flickr
+    .request()
+    .media()
+    .search(req.params[0])
+    .get({
+        media: 'photos', // Only photos, no videos
+        sort: 'date-taken-desc', // Ordered by most recently taken photos)
+        page: parseInt(req.query.page) || 1,
+        per_page: 20,
+        licence: 1
+    })
+    .then(data => {
+      var {page, pages, perpage, total, photo} = data.body.photos;
+
+      res.json( {
+
+        page,
+        pages,
+        perpage,
+        total,
+        images: photo.map( image => {
+          return {
+            title: image.title,
+            url: "https://farm"+image.farm+".staticflickr.com/"+image.server+"/"+image.id+"_"+image.secret+".jpg",
+            source: "http://flickr.com/photo.gne?id="+image.id
+          }
+        })
+      });
     }).catch(err => {
       console.error( err );
-    	res.json({})
+      res.json({})
     });
 });
 
